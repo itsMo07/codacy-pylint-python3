@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  codacy: codacy/base@1.0.0
-  codacy_plugins_test: codacy/plugins-test@0.6.0
+  codacy: codacy/base@1.2.0
+  codacy_plugins_test: codacy/plugins-test@0.6.6
 
 jobs:
   test_patterns:
@@ -26,6 +26,13 @@ workflows:
   compile_test_deploy:
     jobs:
       - codacy/checkout_and_version
+      - codacy/sbt:
+          name: check_scalafmt
+          cmd: |
+            sbt "scalafmt::test;
+                 sbt:scalafmt::test"
+          requires:
+            - codacy/checkout_and_version
       - test_patterns:
           requires:
             - codacy/checkout_and_version

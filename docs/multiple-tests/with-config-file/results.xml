@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+    <file name="E0103.py">
+        <error source="E0103" line="7" message="'break' not properly in loop" severity="error" />
+        <error source="W0101" line="9" message="Unreachable code" severity="warning" />
+        <error source="E0103" line="13" message="'continue' not properly in loop" severity="error" />
+    </file>
+</checkstyle>

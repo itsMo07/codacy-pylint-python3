@@ -6,8 +6,7 @@ orbs:
 
 jobs:
   test_patterns:
-    machine:
-      image: ubuntu-1604:201903-01
+    machine: true
     working_directory: ~/workdir
     steps:
       - attach_workspace:

@@ -120,6 +120,7 @@ def chunks(lst,n):
 def runPylintWith(rules, files, cwd):
     res = runPylint([
         '--output-format=parseable',
+        '--msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"',
         '--load-plugins=pylint_django',
         '--disable=django-installed-checker,django-model-checker',
         '--load-plugins=pylint_flask'] +

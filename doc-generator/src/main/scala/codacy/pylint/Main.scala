@@ -86,7 +86,14 @@ object Main {
   }
 
   val rulesNamesTitlesBodiesPlainText = rulesNamesTitlesBodies.map {
-    case (name, title, body) => (name, title, body.text)
+    case (name, title, body) =>
+      val newLines = body.text.linesIterator.toList match {
+        case title :: secondLine :: rest =>
+          title.stripSuffix(".") + "." :: secondLine.capitalize :: rest
+        case lines => lines
+      }
+      val descriptionText = newLines.mkString(" ")
+      (name, title, descriptionText)
   }
 
   val docsPath = "../docs"

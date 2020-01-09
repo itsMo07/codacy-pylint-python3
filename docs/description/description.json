@@ -217,12 +217,60 @@
   {
     "patternId": "C0103",
     "title": "invalid-name (C0103)",
-    "description": "%s name \"%s\" doesn't conform to %s. Used when the name doesn't conform to naming rules associated to its type (constant, variable, class...)."
+    "description": "%s name \"%s\" doesn't conform to %s. Used when the name doesn't conform to naming rules associated to its type (constant, variable, class...).",
+    "parameters": [
+      {
+        "name": "argument-rgx",
+        "description": "Regular expression matching correct argument names. Overrides argument- naming-style."
+      },
+      {
+        "name": "attr-rgx",
+        "description": "Regular expression matching correct attribute names."
+      },
+      {
+        "name": "class-rgx",
+        "description": "Regular expression matching correct class names."
+      },
+      {
+        "name": "const-rgx",
+        "description": "Regular expression matching correct constant names."
+      },
+      {
+        "name": "function-rgx",
+        "description": "Regular expression matching correct function names."
+      },
+      {
+        "name": "method-rgx",
+        "description": "Regular expression matching correct method names."
+      },
+      {
+        "name": "module-rgx",
+        "description": "Regular expression matching correct module names."
+      },
+      {
+        "name": "variable-rgx",
+        "description": "Regular expression matching correct variable names."
+      },
+      {
+        "name": "inlinevar-rgx",
+        "description": "Regular expression matching correct inline iteration names."
+      },
+      {
+        "name": "class-attribute-rgx",
+        "description": "Regular expression matching correct class attribute names."
+      }
+    ]
   },
   {
     "patternId": "C0102",
     "title": "blacklisted-name (C0102)",
-    "description": "Black listed name \"%s\". Used when the name is listed in the black list (unauthorized names)."
+    "description": "Black listed name \"%s\". Used when the name is listed in the black list (unauthorized names).",
+    "parameters": [
+      {
+        "name": "bad-names",
+        "description": "Bad variable names which should always be refused, separated by a comma."
+      }
+    ]
   },
   {
     "patternId": "C0122",
@@ -467,7 +515,13 @@
   {
     "patternId": "R0914",
     "title": "too-many-locals (R0914)",
-    "description": "Too many local variables (%s/%s). Used when a function or method has too many local variables."
+    "description": "Too many local variables (%s/%s). Used when a function or method has too many local variables.",
+    "parameters": [
+      {
+        "name": "max-locals",
+        "description": "Maximum number of locals for function / method body."
+      }
+    ]
   },
   {
     "patternId": "R0904",
@@ -582,7 +636,13 @@
   {
     "patternId": "C0301",
     "title": "line-too-long (C0301)",
-    "description": "Line too long (%s/%s). Used when a line is longer than a given number of characters."
+    "description": "Line too long (%s/%s). Used when a line is longer than a given number of characters.",
+    "parameters": [
+      {
+        "name": "max-line-length",
+        "description": "Maximum number of characters on a single line."
+      }
+    ]
   },
   {
     "patternId": "C0327",

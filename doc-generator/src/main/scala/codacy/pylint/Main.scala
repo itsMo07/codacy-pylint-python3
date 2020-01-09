@@ -1,56 +1,36 @@
 package codacy.pylint
 
-import java.io.{File, IOException, PrintWriter}
-import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.{FileVisitResult, Files, Path, SimpleFileVisitor}
+import better.files.File
 
-import scala.io.Source
-import scala.sys.process._
-import scala.util.Using
 import scala.xml._
-
+import scala.io.Source
 import ujson._
 
+import sys.process._
+import scala.util.Using
+
 object Main {
-  private val deleteRecursivelyVisitor = new SimpleFileVisitor[Path] {
-    override def visitFile(
-        file: Path,
-        attrs: BasicFileAttributes
-    ): FileVisitResult = {
-      Files.delete(file)
-      FileVisitResult.CONTINUE
-    }
-
-    override def postVisitDirectory(
-        dir: Path,
-        exc: IOException
-    ): FileVisitResult = {
-      Files.delete(dir)
-      FileVisitResult.CONTINUE
-    }
-  }
-
   implicit class NodeOps(val node: Node) extends AnyVal {
     def hasClass(cls: String): Boolean = node \@ "class" == cls
   }
 
   def toMarkdown(html: String): String = {
-    val directory = Files.createTempDirectory("pylintDoc")
-    try {
-      val file = Files.createTempFile(directory, "pylint-doc", ".html")
-      Files.write(file, html.getBytes())
-      Seq("pandoc", "-f", "html", "-t", "markdown", file.toString).!!
-    } finally {
-      Files.walkFileTree(directory, deleteRecursivelyVisitor)
-    }
+    val result =
+      for {
+        file <- File.temporaryFile()
+        _ = file.write(html)
+        res = Seq("pandoc", "-f", "html", "-t", "markdown", file.pathAsString).!!
+      } yield res
+    result.get()
   }
 
+  val docsPath = "../docs"
+
   val version: String = {
-    Using.resource(Source.fromFile("../docs/patterns.json")) { source =>
-      val patterns = source.mkString
-      val json = ujson.read(patterns)
-      json("version").str
-    }
+    val file = File(docsPath) / "patterns.json"
+    val patterns = file.contentAsString
+    val json = ujson.read(patterns)
+    json("version").str
   }
 
   val htmlString = {
@@ -85,22 +65,135 @@ object Main {
     case (name, title, body) => (name, title, toMarkdown(body.toString))
   }
 
-  val rulesNamesTitlesBodiesPlainText = rulesNamesTitlesBodies.map {
-    case (name, title, body) =>
-      val newLines = body.text.linesIterator.toList match {
-        case title :: secondLine :: rest =>
-          title.stripSuffix(".") + "." :: secondLine.capitalize :: rest
-        case lines => lines
-      }
-      val descriptionText = newLines.mkString(" ")
-      (name, title, descriptionText)
+  def makePlainText(title: String, body: String): (String, String) = {
+    val newLines = body.linesIterator.toList match {
+      case title :: secondLine :: rest =>
+        title.stripSuffix(".") + "." :: secondLine.capitalize :: rest
+      case lines => lines
+    }
+    val descriptionText = newLines.mkString(" ")
+    (title, descriptionText)
   }
 
-  val docsPath = "../docs"
+  val rulesNamesTitlesBodiesPlainText = rulesNamesTitlesBodies.map {
+    case (name, title, body) =>
+      val (newTitle, newBody) = makePlainText(title, body.text)
+      (name, newTitle, newBody)
+  }
 
   val files = rulesNamesTitlesBodiesMarkdown.map {
     case (r, t, b) =>
-      (s"$docsPath/description/$r.md", s"# $t${System.lineSeparator}$b")
+      (
+        File(docsPath) / "description" / s"$r.md",
+        s"# $t${System.lineSeparator}$b"
+      )
+  }
+
+  final case class Parameter(name: String, description: String, default: Value)
+
+  val parameters = Map[String, Seq[Parameter]](
+    "R0914" -> Seq(
+      Parameter(
+        "max-locals",
+        "Maximum number of locals for function / method body.",
+        15
+      )
+    ),
+    "C0301" -> Seq(
+      Parameter(
+        "max-line-length",
+        "Maximum number of characters on a single line.",
+        120
+      )
+    ),
+    "C0102" -> Seq(
+      Parameter(
+        "bad-names",
+        "Bad variable names which should always be refused, separated by a comma.",
+        "foo,bar,baz,toto,tutu,tata"
+      )
+    ),
+    "C0103" ->
+      Seq(
+        Parameter(
+          "argument-rgx",
+          "Regular expression matching correct argument names. Overrides argument- naming-style.",
+          "[a-z_][a-z0-9_]{2,30}$"
+        ),
+        Parameter(
+          "attr-rgx",
+          "Regular expression matching correct attribute names.",
+          "[a-z_][a-z0-9_]{2,30}$"
+        ),
+        Parameter(
+          "class-rgx",
+          "Regular expression matching correct class names.",
+          "[A-Z_][a-zA-Z0-9]+$"
+        ),
+        Parameter(
+          "const-rgx",
+          "Regular expression matching correct constant names.",
+          "(([A-Z_][A-Z0-9_]*)|(__.*__))$"
+        ),
+        Parameter(
+          "function-rgx",
+          "Regular expression matching correct function names.",
+          "[a-z_][a-z0-9_]{2,30}$"
+        ),
+        Parameter(
+          "method-rgx",
+          "Regular expression matching correct method names.",
+          "[a-z_][a-z0-9_]{2,30}$"
+        ),
+        Parameter(
+          "module-rgx",
+          "Regular expression matching correct module names.",
+          "(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$"
+        ),
+        Parameter(
+          "variable-rgx",
+          "Regular expression matching correct variable names.",
+          "[a-z_][a-z0-9_]{2,30}$"
+        ),
+        Parameter(
+          "inlinevar-rgx",
+          "Regular expression matching correct inline iteration names.",
+          "[A-Za-z_][A-Za-z0-9_]*$"
+        ),
+        Parameter(
+          "class-attribute-rgx",
+          "Regular expression matching correct class attribute names.",
+          "([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$"
+        )
+      )
+  )
+
+  def addPatternsParameters(obj: Obj, ruleName: String): Unit = {
+    addParameters(
+      obj,
+      ruleName,
+      param => Obj("name" -> param.name, "default" -> param.default)
+    )
+  }
+
+  def addDescriptionParameters(obj: Obj, ruleName: String): Unit = {
+    addParameters(
+      obj,
+      ruleName,
+      param => Obj("name" -> param.name, "description" -> param.description)
+    )
+  }
+
+  def addParameters(
+      obj: Obj,
+      ruleName: String,
+      f: Parameter => Obj
+  ): Unit = {
+    for {
+      params <- parameters.get(ruleName)
+    } {
+      obj("parameters") = params.map(f)
+    }
   }
 
   val patterns = ujson.write(
@@ -109,7 +202,7 @@ object Main {
       "version" -> version,
       "patterns" -> Arr.from(rulesNamesTitlesBodies.map {
         case (ruleName, _, _) =>
-          Obj(
+          val result = Obj(
             "patternId" -> ruleName,
             "level" -> {
               ruleName.headOption
@@ -126,30 +219,36 @@ object Main {
             },
             "category" -> "CodeStyle"
           )
+          addPatternsParameters(result, ruleName)
+          result
       })
     ),
     indent = 2
   )
 
-  val description = ujson.write(Arr.from(rulesNamesTitlesBodiesPlainText.map {
-    case (ruleName, title, body) =>
-      Obj("patternId" -> ruleName, "title" -> title, "description" -> body)
-  }), indent = 2)
+  val description = ujson.write(
+    Arr.from(rulesNamesTitlesBodiesPlainText.map {
+      case (ruleName, title, body) =>
+        val result =
+          Obj("patternId" -> ruleName, "title" -> title, "description" -> body)
+        addDescriptionParameters(result, ruleName)
+        result
+    }),
+    indent = 2
+  )
 
-  def writeToFile(file: String, content: String): Unit = {
-    Using.resource(new PrintWriter(new File(file))) { patternsPW =>
-      patternsPW.println(content)
-    }
+  def writeToFile(file: File, string: String): Unit = {
+    file.write(s"${string}${System.lineSeparator}")
   }
 
   def main(args: Array[String]): Unit = {
-    writeToFile(s"$docsPath/patterns.json", patterns)
-    writeToFile(s"$docsPath/description/description.json", description)
-    files.foreach {
-      case (filename, content) =>
-        Using.resource(new PrintWriter(new File(filename)))(
-          _.println(content.trim())
-        )
-    }
+    writeToFile(File(docsPath) / "patterns.json", patterns)
+    writeToFile(
+      File(docsPath) / "description" / "description.json",
+      description
+    )
+    files
+      .map { case (n, c) => (n, c.trim) }
+      .foreach { case (file, content) => writeToFile(file, content) }
   }
 }

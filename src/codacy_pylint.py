@@ -4,10 +4,13 @@ import json
 import jsonpickle
 from subprocess import Popen, PIPE
 import ast
+from itertools import groupby
 import glob
 import re
 import signal
 from contextlib import contextmanager
+import tempfile
+import traceback
 
 @contextmanager
 def timeout(time):
@@ -17,19 +20,11 @@ def timeout(time):
     signal.alarm(time)
     yield
 
-DEFAULT_TIMEOUT = 16 * 60
+DEFAULT_TIMEOUT = 15 * 60
 def getTimeout(timeoutString):
-    l = timeoutString.split()
-    if len(l) != 2 or not l[0].isdigit():
+    if not timeoutString.isdigit():
         return DEFAULT_TIMEOUT
-    elif l[1] == "second" or l[1] == "seconds":
-        return int(l[0])
-    elif l[1] == "minute" or l[1] == "minutes":
-        return int(l[0]) * 60
-    elif l[1] == "hour" or l[1] == "hours":
-        return int(l[0]) * 60 * 60
-    else:
-        return DEFAULT_TIMEOUT
+    return int(timeoutString)
 
 class Result:
     def __init__(self, filename, message, patternId, line):
@@ -43,6 +38,18 @@ class Result:
         return self.__str__()
     def __eq__(self, o):
         return self.filename == o.filename and self.message == o.message and self.patternId == o.patternId and self.line == o.line
+
+class Configuration:
+    def __init__(self, rules, files, rcfile = None):
+        self.rules = rules
+        self.files = files
+        self.rcfile = rcfile
+    def __str__(self):
+        return f'Configuration({self.rules},{self.files},{self.rcfile})'
+    def __repr__(self):
+        return self.__str__()
+    def __eq__(self, o):
+        return self.files == o.files and self.files == o.files and self.rcfile == o.rcfile
 
 def toJson(obj): return jsonpickle.encode(obj, unpicklable=False)
 
@@ -98,6 +105,98 @@ def walkDirectory(directory):
             yield res
     return list(generate())
 
+def parametersFromJson(jsonObject):
+    def generate():
+        for pattern in (jsonObject.get('patterns') or []):
+            for parameter in (pattern.get('parameters') or []):
+                yield parameter
+    return list(generate())
+
+parametersSections = {
+    "required-attributes": "BASIC",
+    "bad-functions": "BASIC",
+    "good-names": "BASIC",
+    "bad-names": "BASIC",
+    "name-group": "BASIC",
+    "include-naming-hint": "BASIC",
+    "function-rgx": "BASIC",
+    "function-name-hint": "BASIC",
+    "variable-rgx": "BASIC",
+    "variable-name-hint": "BASIC",
+    "const-rgx": "BASIC",
+    "const-name-hint": "BASIC",
+    "attr-rgx": "BASIC",
+    "attr-name-hint": "BASIC",
+    "argument-rgx": "BASIC",
+    "argument-name-hint": "BASIC",
+    "class-attribute-rgx": "BASIC",
+    "class-attribute-name-hint": "BASIC",
+    "inlinevar-rgx": "BASIC",
+    "inlinevar-name-hint": "BASIC",
+    "class-rgx": "BASIC",
+    "class-name-hint": "BASIC",
+    "module-rgx": "BASIC",
+    "module-name-hint": "BASIC",
+    "method-rgx": "BASIC",
+    "method-name-hint": "BASIC",
+    "no-docstring-rgx": "BASIC",
+    "docstring-min-length": "BASIC",
+    "spelling-dict": "SPELLING",
+    "spelling-ignore-words": "SPELLING",
+    "spelling-private-dict-file": "SPELLING",
+    "spelling-store-unknown-words": "SPELLING",
+    "min-similarity-lines": "SIMILARITIES",
+    "ignore-comments": "SIMILARITIES",
+    "ignore-docstrings": "SIMILARITIES",
+    "ignore-imports": "SIMILARITIES",
+    "logging-modules": "LOGGING",
+    "max-line-length": "FORMAT",
+    "ignore-long-lines": "FORMAT",
+    "single-line-if-stmt": "FORMAT",
+    "no-space-check": "FORMAT",
+    "max-module-lines": "FORMAT",
+    "indent-string": "FORMAT",
+    "indent-after-paren": "FORMAT",
+    "expected-line-ending-format": "FORMAT",
+    "notes": "MISCELLANEOUS",
+    "ignore-mixin-members": "TYPECHECK",
+    "ignored-modules": "TYPECHECK",
+    "ignored-classes": "TYPECHECK",
+    "zope": "TYPECHECK",
+    "generated-members": "TYPECHECK",
+    "ignore-iface-methods": "CLASSES",
+    "defining-attr-methods": "CLASSES",
+    "valid-classmethod-first-arg": "CLASSES",
+    "valid-metaclass-classmethod-first-arg": "CLASSES",
+    "exclude-protected": "CLASSES",
+    "max-args": "DESIGN",
+    "ignored-argument-names": "DESIGN",
+    "max-locals": "DESIGN",
+    "max-returns": "DESIGN",
+    "max-branches": "DESIGN",
+    "max-statements": "DESIGN",
+    "max-parents": "DESIGN",
+    "max-attributes": "DESIGN",
+    "min-public-methods": "DESIGN",
+    "max-public-methods": "DESIGN",
+    "deprecated-modules": "IMPORTS",
+    "import-graph": "IMPORTS",
+    "ext-import-graph": "IMPORTS",
+    "int-import-graph": "IMPORTS",
+    "overgeneral-exceptions": "EXCEPTIONS"
+}
+
+def pyconfigString(parameters):
+    def generate():
+        for k, g in groupby(parameters, lambda p: parametersSections[p['name']]):
+            yield f'[{k}]'
+            for p in g:
+                yield f"{p['name']}={p['value']}"
+    if parameters == []:
+        return None
+    else:
+        return os.linesep.join(list(generate())) + os.linesep
+
 def readConfiguration(configFile, srcDir):
     def allFiles(): return walkDirectory(srcDir)
     try:
@@ -107,44 +206,58 @@ def readConfiguration(configFile, srcDir):
         if tools and 'patterns' in tools[0]:
             pylint = tools[0]
             rules = ['--disable=all', '--enable=' + ','.join([p['patternId'] for p in pylint.get('patterns') or []])]
+            rcfile = pyconfigString(parametersFromJson(pylint))
         else:
             rules = []
+            rcfile = None
+        return Configuration(rules, files, rcfile)
     except Exception:
         rules = []
         files = allFiles()
-    return rules, [f for f in files if isPython3(f)]
+        return Configuration(rules=[], files=allFiles())
 
 def chunks(lst,n):
     return [lst[i:i + n] for i in range(0, len(lst), n)]
 
-def runPylintWith(rules, files, cwd):
+def runPylintWith(rules, files, cwd, rcfile_path=None):
+    rcfile_option = [f'--rcfile={rcfile_path}'] if rcfile_path is not None else []
     res = runPylint([
         '--output-format=parseable',
         '--msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"',
         '--load-plugins=pylint_django',
         '--disable=django-installed-checker,django-model-checker',
         '--load-plugins=pylint_flask'] +
+        rcfile_option +
         rules,
         files,
         cwd)
     return parseResult(res)
 
 def runTool(configFile, srcDir):
-    (rules, files) = readConfiguration(configFile, srcDir)
-    res = []
-    filesWithPath = [os.path.join(srcDir,f) for f in files]
-    for chunk in chunks(filesWithPath, 10):
-        res.extend(runPylintWith(rules, chunk, srcDir))
-    for result in res:
-        if result.filename.startswith(srcDir):
-            result.filename = os.path.relpath(result.filename, srcDir)
-    return res
+    configFile = os.path.normpath(configFile) if configFile else None
+    srcDir = os.path.normpath(srcDir) if srcDir else None
+    configuration = readConfiguration(configFile, srcDir)
+    with tempfile.TemporaryDirectory() as tempdir:
+        if configuration.rcfile is not None:
+            rcfile_path = os.path.join(tempdir, 'rcfile')
+            with open(rcfile_path, 'w') as rcfile:
+                print(configuration.rcfile, file=rcfile)
+        else:
+            rcfile_path = None
+        res = []
+        filesWithPath = [os.path.join(srcDir,f) for f in configuration.files]
+        for chunk in chunks(filesWithPath, 10):
+            res.extend(runPylintWith(configuration.rules, chunk, srcDir, rcfile_path))
+        for result in res:
+            if result.filename.startswith(srcDir):
+                result.filename = os.path.relpath(result.filename, srcDir)
+        return res
 
 def resultsToJson(results):
     return os.linesep.join([toJson(res) for res in results])
 
 if __name__ == '__main__':
-    with timeout(getTimeout(os.environ.get('TIMEOUT') or '')):
+    with timeout(getTimeout(os.environ.get('TIMEOUT_SECONDS') or '')):
         try:
             results = runTool('/.codacyrc', '/src')
             print(resultsToJson(results))

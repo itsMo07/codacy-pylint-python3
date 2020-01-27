@@ -65,12 +65,10 @@ class PyLintTest(unittest.TestCase):
             with open(codacyrcPath, "w") as codacyrc:
                 print('{"tools":[{"name":"PyLint (Python 3)","patterns":[{"patternId":"C0111"}]}],"files":["C0111.py"]}', file=codacyrc)
             
-            expectedRules = ['--disable=all', '--enable=C0111']
-            expectedFiles = ['C0111.py']
+            expectedConfiguration = Configuration(['--disable=all', '--enable=C0111'],['C0111.py'], None)
             
-            (rules, files) = readConfiguration(codacyrcPath, "docs/test")
-            self.assertEqual(expectedRules, rules)
-            self.assertEqual(expectedFiles, files)
+            configuration = readConfiguration(codacyrcPath, "docs/test")
+            self.assertEqual(expectedConfiguration, configuration)
 
     def test_parse_message(self):
         message_input = '''[C0103(invalid-name), ] Module name "W0124" doesn't conform to snake_case naming style'''
@@ -136,15 +134,8 @@ function(1)
         self.assertEqual(len(result), 16)
 
     def test_timeout(self):
-        self.assertEqual(getTimeout(" 60    second"), 60)
-        self.assertEqual(getTimeout(" 60    seconds"), 60)
-        self.assertEqual(getTimeout("1 minute"), 60)
-        self.assertEqual(getTimeout(" 2 minutes"), 120)
+        self.assertEqual(getTimeout("60"), 60)
         self.assertEqual(getTimeout("blabla"), DEFAULT_TIMEOUT)
-        self.assertEqual(getTimeout("blabla blabla"), DEFAULT_TIMEOUT)
-        self.assertEqual(getTimeout("10 blabla"), DEFAULT_TIMEOUT)
-        self.assertEqual(getTimeout("1 hour"), 60 * 60)
-        self.assertEqual(getTimeout("1 hours"), 60 * 60)
 
 if __name__ == '__main__':
     unittest.main()

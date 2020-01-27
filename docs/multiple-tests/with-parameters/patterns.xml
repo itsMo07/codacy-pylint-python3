@@ -1,0 +1,5 @@
+<module name="root">
+    <module name="C0301">
+        <property name="max-line-length" value="20"/>
+    </module>
+</module>

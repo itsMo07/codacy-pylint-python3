@@ -1,6 +1,6 @@
 {
   "name": "PyLint (Python 3)",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "patterns": [
     {
       "patternId": "E1701",
@@ -190,12 +190,14 @@
     {
       "patternId": "W0123",
       "level": "Warning",
-      "category": "CodeStyle"
+      "category": "Security",
+      "subcategory": "CommandInjection"
     },
     {
       "patternId": "W0122",
       "level": "Warning",
-      "category": "CodeStyle"
+      "category": "Security",
+      "subcategory": "CommandInjection"
     },
     {
       "patternId": "W0125",

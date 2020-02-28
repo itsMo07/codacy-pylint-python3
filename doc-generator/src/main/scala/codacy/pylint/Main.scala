@@ -229,9 +229,9 @@ object Main {
     indent = 2
   )
 
-  private def getCategory(name: String) = {
+  private def getCategory(patternId: String) = {
     val commandInjection = ("Security", Some("CommandInjection"))
-    name match {
+    patternId match {
       case "W0123" => commandInjection
       case "W0122" => commandInjection
       case _       => ("CodeStyle", None)

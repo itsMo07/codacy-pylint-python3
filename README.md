@@ -1,4 +1,4 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/8bd24fe19ffb4c3ea0e947225e962d28)](https://www.codacy.com/app/Codacy/codacy-pylint)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a22666a62ace46ff8c98f5575a7c87e4)](https://www.codacy.com/gh/codacy/codacy-pylint-python3?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=codacy/codacy-pylint-python3&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://circleci.com/gh/codacy/codacy-pylint.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/codacy/codacy-pylint)
 
 # Codacy Pylint for Python 3

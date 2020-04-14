@@ -44,7 +44,7 @@ class ResultTest(unittest.TestCase):
     def test_toJson(self):
         result = Result("file.py", "message", "id", 80)
         res = toJson(result)
-        expected = '{"filename": "file.py", "line": 80, "message": "message", "patternId": "id"}'
+        expected = '{"filename": "file.py", "message": "message", "patternId": "id", "line": 80}'
         self.assertEqual(res, expected)
 
 class PyLintTest(unittest.TestCase):

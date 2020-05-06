@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  codacy: codacy/base@2.3.0
-  codacy_plugins_test: codacy/plugins-test@0.10.1
+  codacy: codacy/base@3.0.1
+  codacy_plugins_test: codacy/plugins-test@0.10.6
 
 workflows:
   version: 2
@@ -16,6 +16,14 @@ workflows:
                  sbt:scalafmt::test"
           requires:
             - codacy/checkout_and_version
+      - codacy/sbt:
+          name: generate_docs
+          cmd: |
+            sudo apt-get update && sudo apt-get install pandoc
+            sbt doc-generator/run
+          requires:
+            - codacy/checkout_and_version
+          persist_to_workspace: true
       - codacy/shell:
           name: build_docker_and_test
           cmd: |
@@ -24,7 +32,7 @@ workflows:
             docker save --output docker-image.tar $CIRCLE_PROJECT_REPONAME:latest
           persist_to_workspace: true
           requires:
-            - codacy/checkout_and_version
+            - generate_docs
       - codacy_plugins_test/run:
           name: plugins_test
           run_multiple_tests: true

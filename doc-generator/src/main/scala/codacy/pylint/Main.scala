@@ -27,16 +27,16 @@ object Main {
   val docsPath = "../docs"
 
   val version: String = {
-    val file = File(docsPath) / "patterns.json"
-    val patterns = file.contentAsString
-    val json = ujson.read(patterns)
-    json("version").str
+    val file = File("../requirements.txt")
+    file.lines.collectFirst {
+      case s"pylint==$version" => version
+    }.get
   }
 
   val htmlString = {
     val minorVersion = version.split('.').dropRight(1).mkString(".")
     val url =
-      s"http://pylint.pycqa.org/en/$minorVersion/technical_reference/features.html"
+      s"https://pylint.pycqa.org/en/$minorVersion/technical_reference/features.html"
     Using.resource(Source.fromURL(url))(_.mkString)
   }
 

@@ -5,6 +5,6 @@ lazy val `doc-generator` = project
       "com.github.pathikrit" %% "better-files" % "3.8.0",
       "com.lihaoyi" %% "ujson" % "0.8.0"
     ),
-    scalaVersion := "2.13.1",
+    scalaVersion := "2.13.2",
     Compile / fork := true
   )

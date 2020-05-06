@@ -115,6 +115,11 @@
     "description": "Assert called on a 2-item-tuple. Did you mean 'assert x,y'?. A call of assert on a tuple will always evaluate to true if the tuple is not empty, and will always evaluate to false if it is."
   },
   {
+    "patternId": "W0129",
+    "title": "assert-on-string-literal (W0129)",
+    "description": "Assert statement has a string literal as its first argument. The assert will %s fail. Used when an assert statement has a string literal as its first argument, which will cause the assert to always pass."
+  },
+  {
     "patternId": "W0127",
     "title": "self-assigning-variable (W0127)",
     "description": "Assigning the same variable %r to itself. Emitted when we detect that a variable is assigned to itself"
@@ -213,6 +218,11 @@
     "patternId": "R0124",
     "title": "comparison-with-itself (R0124)",
     "description": "Redundant comparison - %s. Used when something is compared against itself."
+  },
+  {
+    "patternId": "C0144",
+    "title": "non-ascii-name (C0144)",
+    "description": "%s name \"%s\" contains a non-ASCII unicode character. Used when the name contains at least one non-ASCII unicode character."
   },
   {
     "patternId": "C0103",
@@ -368,6 +378,41 @@
     "description": "Value %r in slots conflicts with class variable. Used when a value in __slots__ conflicts with a class variable, property or method."
   },
   {
+    "patternId": "E0304",
+    "title": "invalid-bool-returned (E0304)",
+    "description": "__bool__ does not return bool. Used when a __bool__ method returns something which is not a bool"
+  },
+  {
+    "patternId": "E0308",
+    "title": "invalid-bytes-returned (E0308)",
+    "description": "__bytes__ does not return bytes. Used when a __bytes__ method returns something which is not bytes"
+  },
+  {
+    "patternId": "E0311",
+    "title": "invalid-format-returned (E0311)",
+    "description": "__format__ does not return str. Used when a __format__ method returns something which is not a string"
+  },
+  {
+    "patternId": "E0312",
+    "title": "invalid-getnewargs-returned (E0312)",
+    "description": "__getnewargs__ does not return a tuple. Used when a __getnewargs__ method returns something which is not a tuple"
+  },
+  {
+    "patternId": "E0313",
+    "title": "invalid-getnewargs-ex-returned (E0313)",
+    "description": "__getnewargs_ex__ does not return a tuple containing (tuple, dict). Used when a __getnewargs_ex__ method returns something which is not of the form tuple(tuple, dict)"
+  },
+  {
+    "patternId": "E0309",
+    "title": "invalid-hash-returned (E0309)",
+    "description": "__hash__ does not return int. Used when a __hash__ method returns something which is not an integer"
+  },
+  {
+    "patternId": "E0305",
+    "title": "invalid-index-returned (E0305)",
+    "description": "__index__ does not return int. Used when an __index__ method returns something which is not an integer"
+  },
+  {
     "patternId": "E0301",
     "title": "non-iterator-returned (E0301)",
     "description": "__iter__ returns non-iterator. Used when an __iter__ method returns something which is not an iterable (i.e. has no __next__ method)"
@@ -376,6 +421,21 @@
     "patternId": "E0303",
     "title": "invalid-length-returned (E0303)",
     "description": "__len__ does not return non-negative integer. Used when a __len__ method returns something which is not a non-negative integer"
+  },
+  {
+    "patternId": "E0310",
+    "title": "invalid-length-hint-returned (E0310)",
+    "description": "__length_hint__ does not return non-negative integer. Used when a __length_hint__ method returns something which is not a non- negative integer"
+  },
+  {
+    "patternId": "E0306",
+    "title": "invalid-repr-returned (E0306)",
+    "description": "__repr__ does not return str. Used when a __repr__ method returns something which is not a string"
+  },
+  {
+    "patternId": "E0307",
+    "title": "invalid-str-returned (E0307)",
+    "description": "__str__ does not return str. Used when a __str__ method returns something which is not a string"
   },
   {
     "patternId": "W0212",
@@ -400,7 +460,7 @@
   {
     "patternId": "W0236",
     "title": "invalid-overridden-method (W0236)",
-    "description": "Method %r was expected to be %r, found it instead as %r. Used when we detect that a method was overridden as a property or the other way around, which could result in potential bugs at runtime."
+    "description": "Method %r was expected to be %r, found it instead as %r. Used when we detect that a method was overridden in a way that does not match its base class which could result in potential bugs at runtime."
   },
   {
     "patternId": "W0221",
@@ -780,14 +840,19 @@
     "description": "Unsupported logging format character %r (%#02x) at index %d. Used when an unsupported format character is used in a logging statement format string."
   },
   {
-    "patternId": "W1201",
-    "title": "logging-not-lazy (W1201)",
-    "description": "Specify string format arguments as logging function parameters. Used when a logging statement has a call form of \"logging.<logging method>(format_string % (format_args...))\". Such calls should leave string interpolation to the logging method itself and be written \"logging.<logging method>(format_string, format_args...)\" so that the program may avoid incurring the cost of the interpolation in those cases in which no message will be logged. For more, see http://www.python.org/dev/peps/pep-0282/."
-  },
-  {
     "patternId": "W1202",
     "title": "logging-format-interpolation (W1202)",
-    "description": "Use %s formatting in logging functions%s. Used when a logging statement has a call form of \"logging.<logging method>(<string formatting>)\". with invalid string formatting. Use another way for format the string instead."
+    "description": "Use %s formatting in logging functions. Used when a logging statement has a call form of \"logging.<logging method>(format_string.format(format_args...))\". Use another type of string formatting instead. You can use % formatting but leave interpolation to the logging function by passing the parameters as arguments. If logging-fstring- interpolation is disabled then you can use fstring formatting. If logging- not-lazy is disabled then you can use % formatting as normal."
+  },
+  {
+    "patternId": "W1203",
+    "title": "logging-fstring-interpolation (W1203)",
+    "description": "Use %s formatting in logging functions. Used when a logging statement has a call form of \"logging.<logging method>(f\"...\")\".Use another type of string formatting instead. You can use % formatting but leave interpolation to the logging function by passing the parameters as arguments. If logging-format-interpolation is disabled then you can use str.format. If logging-not-lazy is disabled then you can use % formatting as normal."
+  },
+  {
+    "patternId": "W1201",
+    "title": "logging-not-lazy (W1201)",
+    "description": "Use %s formatting in logging functions. Used when a logging statement has a call form of \"logging.<logging method>(format_string % (format_args...))\". Use another type of string formatting instead. You can use % formatting but leave interpolation to the logging function by passing the parameters as arguments. If logging-fstring- interpolation is disabled then you can use fstring formatting. If logging- format-interpolation is disabled then you can use str.format."
   },
   {
     "patternId": "W0511",
@@ -897,7 +962,7 @@
   {
     "patternId": "W1622",
     "title": "next-method-called (W1622)",
-    "description": "Called a next() method on an object. Used when an object's next() method is called (Python 3 uses the next() built- in function)"
+    "description": "Called a next() method on an object. Used when an object's next() method is called (Python 3 uses the next() built-in function)"
   },
   {
     "patternId": "W1620",
@@ -1362,7 +1427,7 @@
   {
     "patternId": "W1510",
     "title": "subprocess-run-check (W1510)",
-    "description": "Using subprocess.run without explicitly set `check` is not recommended. The check parameter should always be used with explicitly set check keyword to make clear what the error-handling behavior is.https://docs.python.org/3/library/subprocess.html#subprocess.runs"
+    "description": "Using subprocess.run without explicitly set `check` is not recommended. The check parameter should always be used with explicitly set check keyword to make clear what the error-handling behavior is.https://docs.python.org/3/library/subprocess.html#subprocess.run"
   },
   {
     "patternId": "W1506",
@@ -1440,8 +1505,8 @@
     "description": "Format string dictionary key should be a string, not %s. Used when a format string that uses named conversion specifiers is used with a dictionary whose keys are not all strings."
   },
   {
-    "patternId": "W1403",
-    "title": "implicit-str-concat-in-sequence (W1403)",
+    "patternId": "W1404",
+    "title": "implicit-str-concat (W1404)",
     "description": "Implicit string concatenation found in %s. String literals are implicitly concatenated in a literal iterable definition : maybe a comma is missing ?"
   },
   {
@@ -1460,6 +1525,11 @@
     "description": "Missing keyword argument %r for format string. Used when a PEP 3101 format string that uses named fields doesn't receive one or more required keywords."
   },
   {
+    "patternId": "W1405",
+    "title": "inconsistent-quotes (W1405)",
+    "description": "Quote delimiter %s is inconsistent with the rest of the file. Quote delimiters are not used consistently throughout a module (with allowances made for avoiding unnecessary escaping)."
+  },
+  {
     "patternId": "W1304",
     "title": "unused-format-string-argument (W1304)",
     "description": "Unused format argument %r. Used when a PEP 3101 format string that uses named fields is used with an argument that is not required by the format string."
@@ -1468,6 +1538,11 @@
     "patternId": "W1301",
     "title": "unused-format-string-key (W1301)",
     "description": "Unused key %r in format string dictionary. Used when a format string that uses named conversion specifiers is used with a dictionary that contains keys not required by the format string."
+  },
+  {
+    "patternId": "W1309",
+    "title": "f-string-without-interpolation (W1309)",
+    "description": "Using an f-string that does not have any interpolated variables. Used when we detect an f-string that does not use any interpolation variables, in which case it can be either a normal string or a bug in the code."
   },
   {
     "patternId": "W1307",
@@ -1600,9 +1675,19 @@
     "description": "Keyword argument before variable positional arguments list in the definition of %s function. When defining a keyword argument before variable positional arguments, one can end up in having multiple values passed for the aforementioned parameter in case the method is called with keyword arguments."
   },
   {
+    "patternId": "W1115",
+    "title": "non-str-assignment-to-dunder-name (W1115)",
+    "description": "Non-string value assigned to __name__. Emitted when a non-string vaue is assigned to __name__"
+  },
+  {
     "patternId": "W1114",
     "title": "arguments-out-of-order (W1114)",
     "description": "Positional arguments appear to be out of order. Emitted when the caller's argument names fully match the parameter names in the function signature but do not have the same order."
+  },
+  {
+    "patternId": "W1116",
+    "title": "isinstance-second-argument-not-valid-type (W1116)",
+    "description": "Second argument of isinstance is not a type. Emitted when the second argument of an isinstance call is not a type."
   },
   {
     "patternId": "I1101",

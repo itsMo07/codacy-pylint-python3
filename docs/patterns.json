@@ -1,6 +1,6 @@
 {
   "name": "PyLint (Python 3)",
-  "version": "2.4.4",
+  "version": "2.5.2",
   "patterns": [
     {
       "patternId": "E1701",
@@ -118,6 +118,11 @@
       "category": "CodeStyle"
     },
     {
+      "patternId": "W0129",
+      "level": "Warning",
+      "category": "CodeStyle"
+    },
+    {
       "patternId": "W0127",
       "level": "Warning",
       "category": "CodeStyle"
@@ -216,6 +221,11 @@
     },
     {
       "patternId": "R0124",
+      "level": "Info",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "C0144",
       "level": "Info",
       "category": "CodeStyle"
     },
@@ -373,12 +383,62 @@
       "category": "CodeStyle"
     },
     {
+      "patternId": "E0304",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0308",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0311",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0312",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0313",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0309",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0305",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
       "patternId": "E0301",
       "level": "Error",
       "category": "CodeStyle"
     },
     {
       "patternId": "E0303",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0310",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0306",
+      "level": "Error",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "E0307",
       "level": "Error",
       "category": "CodeStyle"
     },
@@ -785,12 +845,17 @@
       "category": "CodeStyle"
     },
     {
-      "patternId": "W1201",
+      "patternId": "W1202",
       "level": "Warning",
       "category": "CodeStyle"
     },
     {
-      "patternId": "W1202",
+      "patternId": "W1203",
+      "level": "Warning",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "W1201",
       "level": "Warning",
       "category": "CodeStyle"
     },
@@ -1445,7 +1510,7 @@
       "category": "CodeStyle"
     },
     {
-      "patternId": "W1403",
+      "patternId": "W1404",
       "level": "Warning",
       "category": "CodeStyle"
     },
@@ -1465,12 +1530,22 @@
       "category": "CodeStyle"
     },
     {
+      "patternId": "W1405",
+      "level": "Warning",
+      "category": "CodeStyle"
+    },
+    {
       "patternId": "W1304",
       "level": "Warning",
       "category": "CodeStyle"
     },
     {
       "patternId": "W1301",
+      "level": "Warning",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "W1309",
       "level": "Warning",
       "category": "CodeStyle"
     },
@@ -1605,7 +1680,17 @@
       "category": "CodeStyle"
     },
     {
+      "patternId": "W1115",
+      "level": "Warning",
+      "category": "CodeStyle"
+    },
+    {
       "patternId": "W1114",
+      "level": "Warning",
+      "category": "CodeStyle"
+    },
+    {
+      "patternId": "W1116",
       "level": "Warning",
       "category": "CodeStyle"
     },

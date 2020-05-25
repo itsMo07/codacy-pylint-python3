@@ -5,6 +5,6 @@ Flask==1.1.2
 pylint-flask==0.6
 pylint-common==0.2.5
 pylint-celery==0.3
-SaltPyLint==2019.11.14
+SaltPyLint==2020.5.22
 jsonpickle==1.4.1
 asttokens==2.0.4

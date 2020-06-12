@@ -1,4 +1,4 @@
-pylint==2.5.2
+pylint==2.5.3
 Django==3.0.7
 pylint-django==2.0.15
 Flask==1.1.2

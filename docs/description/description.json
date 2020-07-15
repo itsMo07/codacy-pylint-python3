@@ -22,7 +22,7 @@
   {
     "patternId": "E0116",
     "title": "continue-in-finally (E0116)",
-    "description": "'continue' not supported inside 'finally' clause. Emitted when the continue keyword is found inside a finally clause, which is a SyntaxError."
+    "description": "'continue' not supported inside 'finally' clause. Emitted when the continue keyword is found inside a finally clause, which is a SyntaxError. This message can't be emitted when using Python >= 3.8."
   },
   {
     "patternId": "E0110",
@@ -748,11 +748,6 @@
     "patternId": "E0402",
     "title": "relative-beyond-top-level (E0402)",
     "description": "Attempted relative import beyond top-level package. Used when a relative import tries to access too many levels in the current package."
-  },
-  {
-    "patternId": "E0401",
-    "title": "import-error (E0401)",
-    "description": "Unable to import %s. Used when pylint has been unable to import a module."
   },
   {
     "patternId": "W0406",

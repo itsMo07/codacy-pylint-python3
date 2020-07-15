@@ -1,6 +1,6 @@
 {
   "name": "PyLint (Python 3)",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "patterns": [
     {
       "patternId": "E1701",
@@ -751,11 +751,6 @@
     },
     {
       "patternId": "E0402",
-      "level": "Error",
-      "category": "CodeStyle"
-    },
-    {
-      "patternId": "E0401",
       "level": "Error",
       "category": "CodeStyle"
     },

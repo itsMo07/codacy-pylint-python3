@@ -10,6 +10,8 @@ import sys.process._
 import scala.util.Using
 
 object Main {
+  val blacklist = Set("E0401")
+
   implicit class NodeOps(val node: Node) extends AnyVal {
     def hasClass(cls: String): Boolean = node \@ "class" == cls
   }
@@ -33,12 +35,15 @@ object Main {
     }.get
   }
 
-  val htmlString = {
+  val htmlString = Using.resource {
     val minorVersion = version.split('.').dropRight(1).mkString(".")
-    val url =
+    val url = new java.net.URL(
       s"https://pylint.pycqa.org/en/$minorVersion/technical_reference/features.html"
-    Using.resource(Source.fromURL(url))(_.mkString)
-  }
+    )
+    val connection = url.openConnection.asInstanceOf[java.net.HttpURLConnection]
+    connection.setRequestProperty("User-agent", "Mozilla/5.0")
+    Source.fromInputStream(connection.getInputStream)
+  }(_.mkString)
 
   val html = XML.loadString(htmlString)
 
@@ -57,7 +62,7 @@ object Main {
   val pattern = """.*\((.+)\).*""".r
 
   val rulesNamesTitlesBodies = rules.zip(bodies).collect {
-    case (rule @ pattern(ruleName), body) =>
+    case (rule @ pattern(ruleName), body) if !blacklist.contains(ruleName) =>
       (ruleName, rule.stripSuffix(":"), body)
   }
 

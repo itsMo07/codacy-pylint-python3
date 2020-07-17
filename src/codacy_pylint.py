@@ -205,7 +205,7 @@ def readConfiguration(configFile, srcDir):
     try:
         configuration = readJsonFile(configFile)
         files = configuration.get('files') or allFiles()
-        tools = [t for t in configuration['tools'] if t['name'] == 'PyLint (Python 3)']
+        tools = [t for t in configuration['tools'] if t['name'] == 'pylintpython3']
         if tools and 'patterns' in tools[0]:
             pylint = tools[0]
             rules = ['--disable=all', '--enable=' + ','.join([p['patternId'] for p in pylint.get('patterns') or []])]

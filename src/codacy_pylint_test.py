@@ -37,7 +37,7 @@ def dup_function():
     return 2
 '''
     sources = [('E0102.py', source)]
-    config = '{"tools":[{"name":"PyLint (Python 3)","patterns":[{"patternId":"E0102"}]}],"files":["E0102.py"]}'
+    config = '{"tools":[{"name":"pylintpython3","patterns":[{"patternId":"E0102"}]}],"files":["E0102.py"]}'
     return config, sources
 
 class ResultTest(unittest.TestCase):
@@ -63,7 +63,7 @@ class PyLintTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             codacyrcPath = os.path.join(directory, ".codacyrc")
             with open(codacyrcPath, "w") as codacyrc:
-                print('{"tools":[{"name":"PyLint (Python 3)","patterns":[{"patternId":"C0111"}]}],"files":["C0111.py"]}', file=codacyrc)
+                print('{"tools":[{"name":"pylintpython3","patterns":[{"patternId":"C0111"}]}],"files":["C0111.py"]}', file=codacyrc)
             
             expectedConfiguration = Configuration(['--disable=all', '--enable=C0111'],['C0111.py'], None)
             
@@ -77,7 +77,7 @@ class PyLintTest(unittest.TestCase):
         self.assertEqual(message, '''Module name "W0124" doesn't conform to snake_case naming style''')
 
     def test_E0711(self):
-        config = '{"tools":[{"name":"PyLint (Python 3)","patterns":[{"patternId":"E0711"}]}],"files":["E0711.py"]}'
+        config = '{"tools":[{"name":"pylintpython3","patterns":[{"patternId":"E0711"}]}],"files":["E0711.py"]}'
         sources = [('E0711.py',
 '''##Patterns: E0711
 ##Err: E0711
@@ -92,7 +92,7 @@ raise NotImplementedError''')]
         self.assertEqual(withConfigAndSources(config, sources), expected_result)
 
     def test_E1125(self):
-        config = '{"tools":[{"name":"PyLint (Python 3)","patterns":[{"patternId":"E1125"}]}],"files":["E1125.py"]}'
+        config = '{"tools":[{"name":"pylintpython3","patterns":[{"patternId":"E1125"}]}],"files":["E1125.py"]}'
         sources = [('E1125.py',
 '''##Patterns: E1125
 

@@ -22,7 +22,7 @@ object Main {
       for {
         file <- File.temporaryFile()
         _ = file.write(html)
-        res = Seq("pandoc", "-f", "html", "-t", "markdown", file.pathAsString).!!
+        res = Seq("pandoc", "-f", "html", "-t", "commonmark", file.pathAsString).!!
       } yield res
     result.get()
   }
@@ -92,6 +92,7 @@ object Main {
       (
         File(docsPath) / "description" / s"$r.md",
         s"""# $t
+           |
            |$b""".stripMargin
       )
   }

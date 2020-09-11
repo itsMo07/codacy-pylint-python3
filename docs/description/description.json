@@ -644,6 +644,11 @@
     "description": "Catching too general exception %s. Used when an except catches a too general exception, possibly burying unrelated errors."
   },
   {
+    "patternId": "W0707",
+    "title": "raise-missing-from (W0707)",
+    "description": "Consider explicitly re-raising using the 'from' keyword. Python 3's exception chaining means it shows the traceback of the current exception, but also the original exception. Not using raise from makes the traceback inaccurate, because the message implies there is a bug in the exception-handling code itself, which is a separate situation than wrapping an exception."
+  },
+  {
     "patternId": "W0715",
     "title": "raising-format-tuple (W0715)",
     "description": "Exception arguments suggest string formatting might be intended. Used when passing multiple arguments to an exception constructor, the first of them a string literal containing what appears to be placeholders intended for formatting"
@@ -674,19 +679,9 @@
     "description": "Bad indentation. Found %s %s, expected %s. Used when an unexpected number of indentation's tabulations or spaces has been found."
   },
   {
-    "patternId": "W0312",
-    "title": "mixed-indentation (W0312)",
-    "description": "Found indentation with %ss instead of %ss. Used when there are some mixed tabs and spaces in a module."
-  },
-  {
     "patternId": "W0301",
     "title": "unnecessary-semicolon (W0301)",
     "description": "Unnecessary semicolon. Used when a statement is ended by a semi-colon (\";\"), which isn't necessary (that's python, not C ;)."
-  },
-  {
-    "patternId": "C0326",
-    "title": "bad-whitespace (C0326)",
-    "description": "%s space %s %s %s. Used when a wrong number of spaces is used around an operator, bracket or block opener."
   },
   {
     "patternId": "C0304",
@@ -738,11 +733,6 @@
     "patternId": "C0325",
     "title": "superfluous-parens (C0325)",
     "description": "Unnecessary parens after %r keyword. Used when a single item in parentheses follows an if, for, or other keyword."
-  },
-  {
-    "patternId": "C0330",
-    "title": "bad-continuation (C0330)",
-    "description": "Wrong %s indentation%s%s. TODO"
   },
   {
     "patternId": "E0402",
@@ -867,7 +857,7 @@
   {
     "patternId": "E1603",
     "title": "unpacking-in-except (E1603)",
-    "description": "Implicit unpacking of exceptions is not supported in Python 3. Python3 will not allow implicit unpacking of exceptions in except clauses. See http://www.python.org/dev/peps/pep-3110/"
+    "description": "Implicit unpacking of exceptions is not supported in Python 3. Python3 will not allow implicit unpacking of exceptions in except clauses. See https://www.python.org/dev/peps/pep-3110/"
   },
   {
     "patternId": "E1609",
@@ -1235,6 +1225,11 @@
     "description": "Consider merging these isinstance calls to isinstance(%s, (%s)). Used when multiple consecutive isinstance calls can be merged into one."
   },
   {
+    "patternId": "R1725",
+    "title": "super-with-arguments (R1725)",
+    "description": "Consider using Python 3 style super() without arguments. Emitted when calling the super() builtin with the current class and instance. On Python 3 these arguments are the default and they can be omitted."
+  },
+  {
     "patternId": "R1717",
     "title": "consider-using-dict-comprehension (R1717)",
     "description": "Consider using a dictionary comprehension. Emitted when we detect the creation of a dictionary using the dict() callable and a transient list. Although there is nothing syntactically wrong with this code, it is hard to read and can be simplified to a dict comprehension.Also it is faster since you don't need to create another transient list"
@@ -1332,7 +1327,7 @@
   {
     "patternId": "R1721",
     "title": "unnecessary-comprehension (R1721)",
-    "description": "Unnecessary use of a comprehension. Instead of using an identitiy comprehension, consider using the list, dict or set constructor. It is faster and simpler."
+    "description": "Unnecessary use of a comprehension. Instead of using an identity comprehension, consider using the list, dict or set constructor. It is faster and simpler."
   },
   {
     "patternId": "R1711",
@@ -1387,7 +1382,7 @@
   {
     "patternId": "W1501",
     "title": "bad-open-mode (W1501)",
-    "description": "\"%s\" is not a valid mode for open. Python supports: r, w, a[, x] modes with b, +, and U (only with r) options. See http://docs.python.org/2/library/functions.html#open"
+    "description": "\"%s\" is not a valid mode for open. Python supports: r, w, a[, x] modes with b, +, and U (only with r) options. See https://docs.python.org/2/library/functions.html#open"
   },
   {
     "patternId": "W1508",
@@ -1407,7 +1402,7 @@
   {
     "patternId": "W1502",
     "title": "boolean-datetime (W1502)",
-    "description": "Using datetime.time in a boolean context. Using datetime.time in a boolean context can hide subtle bugs when the time they represent matches midnight UTC. This behaviour was fixed in Python 3.5. See http://bugs.python.org/issue13936 for reference. This message can't be emitted when using Python >= 3.5."
+    "description": "Using datetime.time in a boolean context. Using datetime.time in a boolean context can hide subtle bugs when the time they represent matches midnight UTC. This behaviour was fixed in Python 3.5. See https://bugs.python.org/issue13936 for reference. This message can't be emitted when using Python >= 3.5."
   },
   {
     "patternId": "W1505",

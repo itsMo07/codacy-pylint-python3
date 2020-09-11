@@ -20,7 +20,7 @@ workflows:
           name: build_docker_and_test
           cmd: |
             docker build -t $CIRCLE_PROJECT_REPONAME:latest .
-            docker run $CIRCLE_PROJECT_REPONAME:latest codacy_pylint_test.py
+            docker run --rm $CIRCLE_PROJECT_REPONAME:latest codacy_pylint_test.py
             docker save --output docker-image.tar $CIRCLE_PROJECT_REPONAME:latest
           persist_to_workspace: true
           requires:

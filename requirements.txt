@@ -1,5 +1,5 @@
 pylint==2.6.0
-Django==3.1.1
+Django==3.1.2
 pylint-django==2.3.0
 Flask==1.1.2
 pylint-flask==0.6

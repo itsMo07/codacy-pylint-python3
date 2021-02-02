@@ -1,6 +1,6 @@
 pylint==2.6.0
 Django==3.1.6
-pylint-django==2.3.0
+pylint-django==2.4.2
 Flask==1.1.2
 pylint-flask==0.6
 pylint-common==0.2.5
